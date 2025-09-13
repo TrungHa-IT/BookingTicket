@@ -7,7 +7,6 @@ RSpec.describe 'Bookings API', type: :request do
       produces 'application/json'
       parameter name: :user_id, in: :query, type: :integer
       parameter name: :show_id, in: :query, type: :integer
-      parameter name: :status, in: :query, type: :string
       parameter name: :q, in: :query, type: :string
       parameter name: :page, in: :query, type: :integer
       parameter name: :per_page, in: :query, type: :integer
@@ -25,10 +24,10 @@ RSpec.describe 'Bookings API', type: :request do
         properties: {
           user_id: { type: :integer },
           show_id: { type: :integer },
-          total_amount: { type: :number },
-          status: { type: :string }
+          booking_time: { type: :string, format: 'date-time' },
+          total_amount: { type: :number }
         },
-        required: ['user_id','show_id','total_amount','status']
+        required: ['user_id', 'show_id', 'booking_time', 'total_amount']
       }
 
       response '201', 'booking created' do

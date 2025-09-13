@@ -35,7 +35,9 @@ class Api::V1::PaymentsController < ApplicationController
     payment = Payment.new(payment_params)
 
     if payment.save
-      send_success_email(payment) if payment.status == "Success"
+      # Send success email if payment is successful
+      PaymentMailer.success_email(payment).deliver_later if payment.status == "Success"
+
       json_success(data: payment, message: "Payment created successfully", status: :created)
     else
       json_error(errors: payment.errors.full_messages)
@@ -44,6 +46,7 @@ class Api::V1::PaymentsController < ApplicationController
 
   def update
     if @payment.update(payment_params)
+      # Send success email if payment is successful
       send_success_email(@payment) if @payment.status == "Success"
       json_success(data: @payment, message: "Payment updated successfully")
     else
