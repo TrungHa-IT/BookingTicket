@@ -1,0 +1,16 @@
+FROM ruby:3.2
+
+# Cài thêm Node.js & Yarn (Rails cần để compile assets)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get update -qq \
+    && apt-get install -y nodejs yarn
+
+# Cài bundler
+RUN gem install bundler
+
+WORKDIR /app
+COPY Gemfile* /app/
+
+RUN bundle install
+COPY . /app
+
