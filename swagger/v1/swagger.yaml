@@ -1,0 +1,474 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/login":
+    post:
+      summary: Login to get token
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '200':
+          description: Login successfull
+        '401':
+          description: Email or Password incorrect
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: a@gmail.com
+                password:
+                  type: string
+                  example: '123456'
+              required:
+              - email
+              - password
+  "/api/v1/register":
+    post:
+      summary: Register and get JWT token
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '201':
+          description: Register successfull
+        '422':
+          description: Data incorrect
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                  example: Nguyen Van B
+                email:
+                  type: string
+                  example: b@gmail.com
+                phone:
+                  type: string
+                  example: '0901234567'
+                password_hash:
+                  type: string
+                  example: '123456'
+                role:
+                  type: integer
+                  example: 0
+              required:
+              - fullname
+              - email
+              - phone
+              - password_hash
+              - role
+  "/api/v1/bookings":
+    get:
+      summary: List bookings
+      tags:
+      - Bookings
+      parameters:
+      - name: user_id
+        in: query
+        schema:
+          type: integer
+      - name: show_id
+        in: query
+        schema:
+          type: integer
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: q
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: bookings listed
+    post:
+      summary: Create booking
+      tags:
+      - Bookings
+      parameters: []
+      responses:
+        '201':
+          description: booking created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                show_id:
+                  type: integer
+                total_amount:
+                  type: number
+                status:
+                  type: string
+              required:
+              - user_id
+              - show_id
+              - total_amount
+              - status
+  "/api/v1/movies":
+    get:
+      summary: list movies
+      tags:
+      - Movies
+      parameters:
+      - name: q
+        in: query
+        description: Search by title
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: Filter by status
+        schema:
+          type: string
+      - name: limit_age
+        in: query
+        description: Filter by age
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create movie
+      tags:
+      - Movies
+      parameters: []
+      responses:
+        '201':
+          description: movie created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                duration_minutes:
+                  type: integer
+                status:
+                  type: string
+                limit_age:
+                  type: integer
+                screening_day:
+                  type: string
+                  format: date
+              required:
+              - title
+              - duration_minutes
+              - status
+              - limit_age
+              - screening_day
+  "/api/v1/movies/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Movie ID
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: show movie
+      tags:
+      - Movies
+      responses:
+        '200':
+          description: successful
+    put:
+      summary: update movie
+      tags:
+      - Movies
+      parameters: []
+      responses:
+        '200':
+          description: movie updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                duration_minutes:
+                  type: integer
+                status:
+                  type: string
+                limit_age:
+                  type: integer
+                screening_day:
+                  type: string
+                  format: date
+    delete:
+      summary: delete movie
+      tags:
+      - Movies
+      responses:
+        '204':
+          description: movie deleted
+  "/api/v1/payments":
+    get:
+      summary: list payments
+      tags:
+      - Payments
+      parameters:
+      - name: status
+        in: query
+        description: Filter by status
+        schema:
+          type: string
+      - name: q
+        in: query
+        description: Search by user fullname
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page number
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Items per page
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create payment
+      tags:
+      - Payments
+      parameters: []
+      responses:
+        '201':
+          description: created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                booking_id:
+                  type: integer
+                payment_method:
+                  type: string
+                amount:
+                  type: number
+                payment_date:
+                  type: string
+                  format: date_time
+                status:
+                  type: string
+              required:
+              - booking_id
+              - payment_method
+              - amount
+              - payment_date
+              - status
+  "/api/v1/payments/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: payment id
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: show payment
+      tags:
+      - Payments
+      responses:
+        '200':
+          description: successful
+    put:
+      summary: update payment
+      tags:
+      - Payments
+      parameters: []
+      responses:
+        '200':
+          description: updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+    delete:
+      summary: delete payment
+      tags:
+      - Payments
+      responses:
+        '204':
+          description: no content
+  "/api/v1/users":
+    get:
+      summary: List users
+      tags:
+      - Users
+      parameters:
+      - name: q
+        in: query
+        description: Search keyword
+        schema:
+          type: string
+      - name: role
+        in: query
+        description: Filter by role
+        schema:
+          type: integer
+      - name: page
+        in: query
+        description: Page number
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Items per page
+        schema:
+          type: integer
+      - name: sort
+        in: query
+        description: Sort field, prefix with - for desc
+        schema:
+          type: string
+      responses:
+        '200':
+          description: users found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        fullname:
+                          type: string
+                        email:
+                          type: string
+                        phone:
+                          type: string
+                        role:
+                          type: integer
+                        created_at:
+                          type: string
+                          format: date-time
+                  meta:
+                    type: object
+    post:
+      summary: Create user
+      tags:
+      - Users
+      parameters: []
+      responses:
+        '201':
+          description: user created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                password:
+                  type: string
+                password_confirmation:
+                  type: string
+                role:
+                  type: integer
+              required:
+              - fullname
+              - email
+              - phone
+              - password
+              - password_confirmation
+  "/api/v1/users/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Show user
+      tags:
+      - Users
+      responses:
+        '200':
+          description: user found
+        '404':
+          description: user not found
+    put:
+      summary: Update user
+      tags:
+      - Users
+      parameters: []
+      responses:
+        '200':
+          description: user updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                phone:
+                  type: string
+                role:
+                  type: integer
+    delete:
+      summary: Delete user
+      tags:
+      - Users
+      responses:
+        '204':
+          description: user deleted
+servers:
+- url: http://localhost:3000
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+- bearerAuth: []
