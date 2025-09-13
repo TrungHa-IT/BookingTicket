@@ -328,6 +328,86 @@ paths:
       responses:
         '204':
           description: no content
+  "/api/v1/seats":
+    get:
+      summary: list seats
+      tags:
+      - Seats
+      parameters:
+      - name: room_id
+        in: query
+        description: Filter by room
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create seat
+      tags:
+      - Seats
+      parameters: []
+      responses:
+        '201':
+          description: seat created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                seat_number:
+                  type: integer
+                seat_row:
+                  type: string
+                room_id:
+                  type: integer
+              required:
+              - seat_number
+              - seat_row
+              - room_id
+  "/api/v1/seats/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Seat ID
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: show seat
+      tags:
+      - Seats
+      responses:
+        '200':
+          description: successful
+    put:
+      summary: update seat
+      tags:
+      - Seats
+      parameters: []
+      responses:
+        '200':
+          description: seat updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                seat_number:
+                  type: integer
+                seat_row:
+                  type: string
+                room_id:
+                  type: integer
+    delete:
+      summary: delete seat
+      tags:
+      - Seats
+      responses:
+        '204':
+          description: seat deleted
   "/api/v1/users":
     get:
       summary: List users

@@ -4,63 +4,58 @@ class Api::V1::SeatsController < ApplicationController
   before_action :set_seat, only: [:show, :update, :destroy]
 
   def index
-    seats = Seat.all
-    seats = seats.where(room_id: params[:room_id]) if params[:room_id].present?
+    seats = Seat.includes(:room)
+                .by_room(params[:room_id])
+                .search(params[:q])
+                .sorted(params[:sort])
 
-    page = params.fetch(:page, 1).to_i
-    per_page = params.fetch(:per_page, 10).to_i
+    page, per_page = set_pagination_params
     paged = seats.page(page).per(per_page)
 
-    render json: {
+    json_success(
       data: paged.as_json(
         only: [:id, :seat_number, :seat_row, :room_id, :created_at],
         include: { room: { only: [:id, :room_name] } }
       ),
-      meta: {
-        current_page: paged.current_page,
-        next_page: paged.next_page,
-        prev_page: paged.prev_page,
-        total_pages: paged.total_pages,
-        total_count: paged.total_count,
-        per_page: paged.limit_value
-      }
-    }
+      meta: pagination_meta(paged)
+    )
   end
 
   def show
-    render json: @seat.as_json(
-      only: [:id, :seat_number, :seat_row, :room_id, :created_at],
-      include: { room: { only: [:id, :room_name] } }
+    json_success(
+      data: @seat.as_json(
+        only: [:id, :seat_number, :seat_row, :room_id, :created_at],
+        include: { room: { only: [:id, :room_name] } }
+      )
     )
   end
 
   def create
     seat = Seat.new(seat_params)
     if seat.save
-      render json: seat, status: :created
+      json_success(data: seat, message: "Seat created successfully", status: :created)
     else
-      render json: { errors: seat.errors.full_messages }, status: :unprocessable_entity
+      json_error(message: "Validation failed", errors: seat.errors.full_messages)
     end
   end
 
   def update
     if @seat.update(seat_params)
-      render json: @seat
+      json_success(data: @seat, message: "Seat updated successfully")
     else
-      render json: { errors: @seat.errors.full_messages }, status: :unprocessable_entity
+      json_error(message: "Validation failed", errors: @seat.errors.full_messages)
     end
   end
 
   def destroy
     @seat.destroy
-    head :no_content
+    json_success(message: "Seat deleted successfully")
   end
 
   private
 
   def set_seat
-    @seat = Seat.find_by(id: params[:id])
-    render json: { error: "Seat not found" }, status: :not_found unless @seat
+    @seat = Seat.find(params[:id]) 
   end
 
   def seat_params

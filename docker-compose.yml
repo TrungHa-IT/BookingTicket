@@ -14,8 +14,10 @@ services:
       - db_data:/var/lib/mysql
 
   web:
-    build: .
-    working_dir: /app
+    build:
+      context: .
+      target: build   # ⚠️ ép dùng stage build thay vì production
+    working_dir: /rails  # ⚠️ đồng bộ với Dockerfile
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b '0.0.0.0' -p 3000"
     environment:
       RAILS_ENV: development
@@ -24,7 +26,7 @@ services:
       DB_USERNAME: user
       DB_PASSWORD: Hatrung8888-
     volumes:
-      - .:/app
+      - .:/rails   # ⚠️ đổi lại để khớp với WORKDIR
     ports:
       - "3000:3000"
     depends_on:

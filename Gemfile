@@ -1,6 +1,8 @@
 source "https://rubygems.org"
 
 # ===== Core gems =====
+gem 'jwt'
+
 gem "rails", "~> 7.2.2", ">= 7.2.2.2"
 gem "mysql2", "~> 0.5"
 gem "puma", ">= 5.0"
@@ -25,13 +27,13 @@ group :development, :test do
 end
 
 # ===== Development only =====
-group :development do
-  gem "web-console"
+group :development, :test do
   gem "rspec-rails"
   gem "rswag-api"
   gem "rswag-ui"
   gem "rswag-specs"
 end
+
 
 # ===== Test only =====
 group :test do
