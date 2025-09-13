@@ -4,8 +4,13 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: user
   password: Hatrung8888-
-  host: db
-  port: 3306
+  # IMPORTANT: Trong Docker, host là tên service của MySQL container trong docker-compose
+  host: <%= ENV.fetch("DB_HOST") { "db" } %>
+  port: <%= ENV.fetch("DB_PORT") { 3306 } %>
+  # Tắt SSL để tránh lỗi SSL khi kết nối từ container Rails
+  ssl_mode: DISABLED
+  reconnect: true
+  timeout: 5000
 
 development:
   <<: *default
@@ -15,3 +20,10 @@ test:
   <<: *default
   database: myapp_test
 
+production:
+  <<: *default
+  database: myapp_production
+  username: <%= ENV['DB_USERNAME'] || 'user' %>
+  password: <%= ENV['DB_PASSWORD'] || 'Hatrung8888-' %>
+  host: <%= ENV['DB_HOST'] || 'db' %>
+  port: <%= ENV['DB_PORT'] || 3306 %>

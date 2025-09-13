@@ -1,0 +1,50 @@
+# syntax=docker/dockerfile:1
+
+# Chọn Ruby version (đúng với .ruby-version của project)
+ARG RUBY_VERSION=3.2.9
+FROM ruby:$RUBY_VERSION-slim
+
+# Set working directory
+WORKDIR /rails
+
+# Cài OS packages cần thiết
+# Cài OS packages cần thiết
+RUN apt-get update -qq && \
+    apt-get install -y \
+        curl \
+        build-essential \
+        default-libmysqlclient-dev \
+        nodejs \
+        git \
+        libjemalloc2 \
+        libvips \
+        gnupg2 \
+        dirmngr \
+        libyaml-dev \
+        unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+
+# Cài Yarn chính thức (không dùng apt-key)
+RUN mkdir -p /usr/share/keyrings && \
+    curl -fsSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /usr/share/keyrings/yarn-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/yarn-archive-keyring.gpg] https://dl.yarnpkg.com/debian stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt-get update && \
+    apt-get install -y yarn
+
+# Cài Bundler
+RUN gem install bundler
+
+# Copy Gemfile và Gemfile.lock để cài gem trước
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+# Copy toàn bộ source code
+COPY . .
+
+# Expose port cho Rails dev server
+EXPOSE 3000
+
+# CMD mặc định: chạy Rails dev server
+CMD ["bin/rails", "server", "-b", "0.0.0.0"]
+
