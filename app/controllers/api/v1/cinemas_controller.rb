@@ -27,25 +27,17 @@ class Api::V1::CinemasController < ApplicationController
   end
 
   def create
-    cinema = Cinema.new(cinema_params)
-
-    if cinema.save
-      json_success(data: cinema, message: "Cinema created successfully", status: :created)
-    else
-      json_error(errors: cinema.errors.full_messages)
-    end
+    cinema = Cinema.create!(cinema_params)
+    json_success(data: cinema, message: "Cinema created successfully", status: :created)
   end
 
   def update
-    if @cinema.update(cinema_params)
-      json_success(data: @cinema, message: "Cinema updated successfully")
-    else
-      json_error(errors: @cinema.errors.full_messages)
-    end
+    @cinema.update!(cinema_params)
+    json_success(data: @cinema, message: "Cinema updated successfully")
   end
 
   def destroy
-    @cinema.destroy
+    @cinema.destroy!
     head :no_content
   end
 

@@ -1,13 +1,20 @@
-# app/mailers/payment_mailer.rb
 class PaymentMailer < ApplicationMailer
-  default from: 'hatrung03022003@gmail.com'
+  default from: 'cinema@gmail.com'
 
   def success_email(payment)
     @payment = payment
     @user = payment.booking.user
+    @show   = payment.booking.show  
+    @seats  = payment.booking.seats 
+    @show_time_detail = payment.booking.booking_seats.first&.show_time_detail
 
-    mail(to: @user.email, subject: 'Thanh toán thành công') do |format|
-      format.html { render 'payment_success' }  # render template HTML cho email
-    end
+    require 'rqrcode'
+    qr = RQRCode::QRCode.new("PAYMENT-#{payment.id}")
+
+    png = qr.as_png(size: 200)
+
+    attachments.inline['qr_code.png'] = png.to_s
+
+    mail(to: @user.email, subject: 'Vé xem phim - Thanh toán thành công')
   end
 end

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Vé xem phim</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; background:#f4f6f8; padding:20px;">
+
+    <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+      
+      <!-- Header -->
+      <h2 style="color:#2c3e50; text-align:center; margin-bottom:10px;">🎉 Thanh toán thành công!</h2>
+      <p style="text-align:center; font-size:15px; color:#555;">Xin chào <strong><%= @user.fullname %></strong>, vé xem phim của bạn đã được xác nhận.</p>
+
+      <!-- Thông tin thanh toán -->
+      <div style="background:#ecf0f1; padding:15px; border-radius:8px; margin:20px 0;">
+        <h3 style="margin-top:0; color:#34495e;">💳 Thông tin thanh toán</h3>
+        <p><strong>Mã thanh toán:</strong> <%= @payment.id %></p>
+        <p><strong>Số tiền:</strong> <%= number_to_currency(@payment.amount, unit: "VNĐ", precision: 0) %></p>
+        <p><strong>Phương thức:</strong> <%= @payment.payment_method %></p>
+        <p><strong>Ngày thanh toán:</strong> <%= @payment.payment_date.strftime("%d/%m/%Y %I:%M %p") %></p>
+      </div>
+
+      <!-- Thông tin vé -->
+      <div style="padding:15px; border-radius:8px; background:#fdfdfd; border:1px solid #e1e1e1;">
+        <h3 style="margin-top:0; color:#e74c3c;">🎬 Thông tin vé</h3>
+        <ul style="list-style:none; padding:0; margin:0;">
+          <li><strong>Tên phim:</strong> <%= @show.movie.title %></li>
+          <li><strong>Rạp:</strong> <%= @show.cinema.name %></li>
+          <li><strong>Phòng chiếu:</strong> <%= @show.room.name %></li>
+          <li>
+            <strong>Ghế:</strong> 
+            <%= @seats.map { |s| "#{s.seat_row}#{s.seat_number}" }.join(", ") %>
+          </li>
+          <li>
+            <strong>Thời gian chiếu:</strong> 
+            <%= @show_time_detail.start_time.strftime("%d/%m/%Y %I:%M %p") %> - 
+            <%= @show_time_detail.end_time.strftime("%I:%M %p") %>
+          </li>
+        </ul>
+      </div>
+
+      <!-- QR Code -->
+      <div style="text-align:center; margin:25px 0;">
+        <p style="font-size:14px; color:#555;">📲 Quét mã QR dưới đây tại quầy để nhận vé:</p>
+        <div style="display:inline-block; padding:10px; background:#fff; border:1px solid #ddd; border-radius:8px;">
+          <%= image_tag attachments['qr_code.png'].url, alt: "QR Code", style: "width:200px; height:200px;" %>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <p style="text-align:center; margin-top:20px; font-size:14px; color:#777;">
+        Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi! Chúc bạn xem phim vui vẻ 🍿🎬
+      </p>
+    </div>
+
+  </body>
+</html>

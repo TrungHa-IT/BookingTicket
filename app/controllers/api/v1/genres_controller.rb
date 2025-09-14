@@ -25,25 +25,17 @@ class Api::V1::GenresController < ApplicationController
   end
 
   def create
-    genre = Genre.new(genre_params)
-
-    if genre.save
-      json_success(data: genre, message: "Genre created successfully", status: :created)
-    else
-      json_error(errors: genre.errors.full_messages)
-    end
+    genre = Genre.create!(genre_params)
+    json_success(data: genre, message: "Genre created successfully", status: :created)
   end
 
   def update
-    if @genre.update(genre_params)
-      json_success(data: @genre, message: "Genre updated successfully")
-    else
-      json_error(errors: @genre.errors.full_messages)
-    end
+    @genre.update!(genre_params)
+    json_success(data: @genre, message: "Genre updated successfully")
   end
 
   def destroy
-    @genre.destroy
+    @genre.destroy!
     head :no_content
   end
 

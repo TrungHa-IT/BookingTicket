@@ -31,31 +31,24 @@ class Api::V1::SeatsController < ApplicationController
   end
 
   def create
-    seat = Seat.new(seat_params)
-    if seat.save
-      json_success(data: seat, message: "Seat created successfully", status: :created)
-    else
-      json_error(message: "Validation failed", errors: seat.errors.full_messages)
-    end
+    seat = Seat.create!(seat_params)
+    json_success(data: seat, message: "Seat created successfully", status: :created)
   end
 
   def update
-    if @seat.update(seat_params)
-      json_success(data: @seat, message: "Seat updated successfully")
-    else
-      json_error(message: "Validation failed", errors: @seat.errors.full_messages)
-    end
+    @seat.update!(seat_params)
+    json_success(data: @seat, message: "Seat updated successfully")
   end
 
   def destroy
-    @seat.destroy
-    json_success(message: "Seat deleted successfully")
+    @seat.destroy!
+    head :no_content
   end
 
   private
 
   def set_seat
-    @seat = Seat.find(params[:id]) 
+    @seat = Seat.find(params[:id])
   end
 
   def seat_params

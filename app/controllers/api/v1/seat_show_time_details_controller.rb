@@ -37,25 +37,17 @@ class Api::V1::SeatShowTimeDetailsController < ApplicationController
   end
 
   def create
-    seat_detail = SeatShowTimeDetail.new(seat_show_time_detail_params)
-
-    if seat_detail.save
-      json_success(data: seat_detail, message: "SeatShowTimeDetail created successfully", status: :created)
-    else
-      json_error(errors: seat_detail.errors.full_messages)
-    end
+    seat_detail = SeatShowTimeDetail.create!(seat_show_time_detail_params)
+    json_success(data: seat_detail, message: "SeatShowTimeDetail created successfully", status: :created)
   end
 
   def update
-    if @seat_show_time_detail.update(seat_show_time_detail_params)
-      json_success(data: @seat_show_time_detail, message: "SeatShowTimeDetail updated successfully")
-    else
-      json_error(errors: @seat_show_time_detail.errors.full_messages)
-    end
+    @seat_show_time_detail.update!(seat_show_time_detail_params)
+    json_success(data: @seat_show_time_detail, message: "SeatShowTimeDetail updated successfully")
   end
 
   def destroy
-    @seat_show_time_detail.destroy
+    @seat_show_time_detail.destroy!
     head :no_content
   end
 

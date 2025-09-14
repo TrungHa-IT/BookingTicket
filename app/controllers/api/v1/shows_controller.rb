@@ -17,8 +17,8 @@ class Api::V1::ShowsController < ApplicationController
       data: paged.as_json(
         only: [:id, :show_day, :ticket_price, :created_at],
         include: {
-          movie: { only: [:id, :title, :duration] },
-          room: { only: [:id, :name] },
+          movie:  { only: [:id, :title, :duration] },
+          room:   { only: [:id, :name] },
           cinema: { only: [:id, :name, :address] }
         }
       ),
@@ -31,36 +31,28 @@ class Api::V1::ShowsController < ApplicationController
       data: @show.as_json(
         only: [:id, :show_day, :ticket_price, :created_at],
         include: {
-          movie: { only: [:id, :title, :duration] },
-          room: { only: [:id, :name] },
-          cinema: { only: [:id, :name, :address] },
-          show_time_details: { only: [:id, :start_time, :end_time] },
-          bookings: { only: [:id, :booking_time, :total_amount, :status] }
+          movie:            { only: [:id, :title, :duration] },
+          room:             { only: [:id, :name] },
+          cinema:           { only: [:id, :name, :address] },
+          show_time_details:{ only: [:id, :start_time, :end_time] },
+          bookings:         { only: [:id, :booking_time, :total_amount, :status] }
         }
       )
     )
   end
 
   def create
-    show = Show.new(show_params)
-
-    if show.save
-      json_success(data: show, message: "Show created successfully", status: :created)
-    else
-      json_error(errors: show.errors.full_messages)
-    end
+    show = Show.create!(show_params)
+    json_success(data: show, message: "Show created successfully", status: :created)
   end
 
   def update
-    if @show.update(show_params)
-      json_success(data: @show, message: "Show updated successfully")
-    else
-      json_error(errors: @show.errors.full_messages)
-    end
+    @show.update!(show_params)
+    json_success(data: @show, message: "Show updated successfully")
   end
 
   def destroy
-    @show.destroy
+    @show.destroy!
     head :no_content
   end
 

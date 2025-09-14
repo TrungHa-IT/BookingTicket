@@ -31,24 +31,17 @@ class Api::V1::MoviesController < ApplicationController
   end
 
   def create
-    movie = Movie.new(movie_params)
-    if movie.save
-      json_success(data: movie, message: "Movie created successfully", status: :created)
-    else
-      json_error(message: "Validation failed", errors: movie.errors.full_messages, status: :unprocessable_entity)
-    end
+    movie = Movie.create!(movie_params)
+    json_success(data: movie, message: "Movie created successfully", status: :created)
   end
 
   def update
-    if @movie.update(movie_params)
-      json_success(data: @movie, message: "Movie updated successfully")
-    else
-      json_error(message: "Validation failed", errors: @movie.errors.full_messages, status: :unprocessable_entity)
-    end
+    @movie.update!(movie_params)
+    json_success(data: @movie, message: "Movie updated successfully")
   end
 
   def destroy
-    @movie.destroy
+    @movie.destroy!
     json_success(message: "Movie deleted successfully")
   end
 

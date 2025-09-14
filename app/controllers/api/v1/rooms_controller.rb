@@ -34,25 +34,17 @@ class Api::V1::RoomsController < ApplicationController
   end
 
   def create
-    room = Room.new(room_params)
-
-    if room.save
-      json_success(data: room, message: "Room created successfully", status: :created)
-    else
-      json_error(errors: room.errors.full_messages)
-    end
+    room = Room.create!(room_params)
+    json_success(data: room, message: "Room created successfully", status: :created)
   end
 
   def update
-    if @room.update(room_params)
-      json_success(data: @room, message: "Room updated successfully")
-    else
-      json_error(errors: @room.errors.full_messages)
-    end
+    @room.update!(room_params)
+    json_success(data: @room, message: "Room updated successfully")
   end
 
   def destroy
-    @room.destroy
+    @room.destroy!
     head :no_content
   end
 

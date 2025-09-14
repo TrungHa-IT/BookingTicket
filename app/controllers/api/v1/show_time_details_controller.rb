@@ -29,32 +29,25 @@ class Api::V1::ShowTimeDetailsController < ApplicationController
         include: {
           show: { only: [:id, :show_day, :ticket_price] },
           booking_seats: { include: { seat: { only: [:id, :seat_row, :seat_number] } } },
-          seat_show_time_details: { only: [:id, :status], include: { seat: { only: [:id, :seat_row, :seat_number] } } }
+          seat_show_time_details: { only: [:id, :status],
+                                    include: { seat: { only: [:id, :seat_row, :seat_number] } } }
         }
       )
     )
   end
 
   def create
-    show_time_detail = ShowTimeDetail.new(show_time_detail_params)
-
-    if show_time_detail.save
-      json_success(data: show_time_detail, message: "ShowTimeDetail created successfully", status: :created)
-    else
-      json_error(errors: show_time_detail.errors.full_messages)
-    end
+    show_time_detail = ShowTimeDetail.create!(show_time_detail_params)
+    json_success(data: show_time_detail, message: "ShowTimeDetail created successfully", status: :created)
   end
 
   def update
-    if @show_time_detail.update(show_time_detail_params)
-      json_success(data: @show_time_detail, message: "ShowTimeDetail updated successfully")
-    else
-      json_error(errors: @show_time_detail.errors.full_messages)
-    end
+    @show_time_detail.update!(show_time_detail_params)
+    json_success(data: @show_time_detail, message: "ShowTimeDetail updated successfully")
   end
 
   def destroy
-    @show_time_detail.destroy
+    @show_time_detail.destroy!
     head :no_content
   end
 

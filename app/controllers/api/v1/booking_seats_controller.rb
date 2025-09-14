@@ -1,4 +1,3 @@
-# app/controllers/api/v1/booking_seats_controller.rb
 module Api
   module V1
     class BookingSeatsController < ApplicationController
@@ -42,25 +41,52 @@ module Api
       end
 
       def create
-        booking_seat = BookingSeat.new(booking_seat_params)
+        ActiveRecord::Base.transaction do
+          booking_seat = BookingSeat.create!(booking_seat_params)
 
-        if booking_seat.save
+          seat_detail = SeatShowTimeDetail.find_or_initialize_by(
+            seat_id: booking_seat.seat_id,
+            show_time_detail_id: booking_seat.show_time_detail_id
+          )
+
+          seat_detail.status = booking_seat.hold_still ? "Held" : "Booked"
+          seat_detail.save!
+
           json_success(data: booking_seat, message: "BookingSeat created successfully", status: :created)
-        else
-          json_error(errors: booking_seat.errors.full_messages)
         end
       end
 
       def update
-        if @booking_seat.update(booking_seat_params)
+        ActiveRecord::Base.transaction do
+          @booking_seat.update!(booking_seat_params)
+
+          # Update trạng thái ghế
+          seat_detail = SeatShowTimeDetail.find_by(
+            seat_id: @booking_seat.seat_id,
+            show_time_detail_id: @booking_seat.show_time_detail_id
+          )
+
+          if seat_detail.present?
+            seat_detail.update!(status: @booking_seat.hold_still ? "Held" : "Booked")
+          end
+
           json_success(data: @booking_seat, message: "BookingSeat updated successfully")
-        else
-          json_error(errors: @booking_seat.errors.full_messages)
         end
       end
 
       def destroy
-        @booking_seat.destroy
+        ActiveRecord::Base.transaction do
+          # Giải phóng ghế (trả về Available)
+          seat_detail = SeatShowTimeDetail.find_by(
+            seat_id: @booking_seat.seat_id,
+            show_time_detail_id: @booking_seat.show_time_detail_id
+          )
+
+          seat_detail.update!(status: "Available") if seat_detail.present?
+
+          @booking_seat.destroy!
+        end
+
         head :no_content
       end
 
@@ -68,8 +94,6 @@ module Api
 
       def set_booking_seat
         @booking_seat = BookingSeat.find(params[:id])
-      rescue ActiveRecord::RecordNotFound
-        render json: { error: "BookingSeat not found" }, status: :not_found
       end
 
       def booking_seat_params

@@ -37,25 +37,17 @@ class Api::V1::BookingsController < ApplicationController
   end
 
   def create
-    booking = Booking.new(booking_params.merge(booking_time: Time.current))
-
-    if booking.save
-      json_success(data: booking, message: "Booking created successfully", status: :created)
-    else
-      render json: { errors: booking.errors.full_messages }, status: :unprocessable_entity
-    end
+    booking = Booking.create!(booking_params.merge(booking_time: Time.current))
+    json_success(data: booking, message: "Booking created successfully", status: :created)
   end
 
   def update
-    if @booking.update(booking_params)
-      json_success(data: @booking, message: "Booking updated successfully")
-    else
-      render json: { errors: @booking.errors.full_messages }, status: :unprocessable_entity
-    end
+    @booking.update!(booking_params)
+    json_success(data: @booking, message: "Booking updated successfully")
   end
 
   def destroy
-    @booking.destroy
+    @booking.destroy!
     head :no_content
   end
 
@@ -68,5 +60,4 @@ class Api::V1::BookingsController < ApplicationController
   def booking_params
     params.require(:booking).permit(:user_id, :show_id, :total_amount, :booking_time)
   end
-
 end
