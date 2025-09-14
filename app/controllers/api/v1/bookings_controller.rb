@@ -6,7 +6,6 @@ class Api::V1::BookingsController < ApplicationController
     bookings = Booking.includes(:user, :show)
                       .by_user(params[:user_id])
                       .by_show(params[:show_id])
-                      .by_status(params[:status])
                       .search(params[:q])
                       .sorted(params[:sort])
 
@@ -15,7 +14,7 @@ class Api::V1::BookingsController < ApplicationController
 
     json_success(
       data: paged.as_json(
-        only: [:id, :booking_time, :total_amount, :status, :created_at],
+        only: [:id, :booking_time, :total_amount, :created_at],
         include: {
           user: { only: [:id, :fullname, :email] },
           show: { only: [:id, :show_day, :ticket_price] }
@@ -28,47 +27,37 @@ class Api::V1::BookingsController < ApplicationController
   def show
     json_success(
       data: @booking.as_json(
-        only: [:id, :booking_time, :total_amount, :status, :created_at],
+        only: [:id, :booking_time, :total_amount, :created_at],
         include: {
           user: { only: [:id, :fullname, :email] },
-          show: { only: [:id, :show_day, :ticket_price] },
-          booking_seats: { include: { seat: { only: [:id, :seat_row, :seat_number] } } },
-          payment: { only: [:id, :payment_method, :amount, :status, :payment_date] }
+          show: { only: [:id, :show_day, :ticket_price] }
         }
       )
     )
   end
 
   def create
-    booking = Booking.new(booking_params.merge(booking_time: Time.current))
-
-    if booking.save
-      json_success(data: booking, message: "Booking created successfully")
-    else
-      render json: { errors: booking.errors.full_messages }, status: :unprocessable_entity
-    end
+    booking = Booking.create!(booking_params.merge(booking_time: Time.current))
+    json_success(data: booking, message: "Booking created successfully", status: :created)
   end
 
   def update
-    if @booking.update(booking_params)
-      json_success(data: @booking, message: "Booking updated successfully")
-    else
-      render json: { errors: @booking.errors.full_messages }, status: :unprocessable_entity
-    end
+    @booking.update!(booking_params)
+    json_success(data: @booking, message: "Booking updated successfully")
   end
 
   def destroy
-    @booking.destroy
+    @booking.destroy!
     head :no_content
   end
 
   private
 
   def set_booking
-    @booking = Booking.find(params[:id]) 
+    @booking = Booking.find(params[:id])
   end
 
   def booking_params
-    params.permit(:user_id, :show_id, :total_amount, :status)
+    params.require(:booking).permit(:user_id, :show_id, :total_amount, :booking_time)
   end
 end

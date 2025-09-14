@@ -6,6 +6,7 @@ class ApplicationController < ActionController::API
   # Xử lý exception toàn cục
   rescue_from ActiveRecord::RecordNotFound,  with: :render_not_found
   rescue_from ActiveRecord::RecordInvalid,   with: :render_unprocessable_entity
+  rescue_from ActiveRecord::RecordNotDestroyed, with: :render_unprocessable_entity
 
   private
 
@@ -45,8 +46,8 @@ class ApplicationController < ActionController::API
   end
 
   # Exception handler
-  def render_not_found(exception)
-    json_error(message: exception.message, status: :not_found)
+  def render_not_found(_exception)
+    json_error(message: "Record not found", status: :not_found)
   end
 
   def render_unprocessable_entity(exception)

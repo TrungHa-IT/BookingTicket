@@ -3,6 +3,16 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "smtp.gmail.com",   # Gmail SMTP server
+    port: 587,                   # Gmail's SMTP port
+    domain: "gmail.com",         # Gmail domain
+    user_name: "hatrung03022003@gmail.com",  # Địa chỉ Gmail của bạn
+    password: "ikwl ktuw gjei eovo",   # Mật khẩu hoặc mật khẩu ứng dụng của Gmail
+    authentication: "plain",     # Phương thức xác thực
+    enable_starttls_auto: true   # Kích hoạt TLS (mã hóa)
+  }
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.

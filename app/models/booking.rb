@@ -5,7 +5,8 @@ class Booking < ApplicationRecord
 
   has_one :payment, dependent: :destroy
   has_many :booking_seats, dependent: :destroy
-
+  has_many :seats, through: :booking_seats
+  
   # Validations
   validates :user_id, presence: true
   validates :show_id, presence: true

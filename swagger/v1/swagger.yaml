@@ -68,6 +68,116 @@ paths:
               - phone
               - password_hash
               - role
+  "/api/v1/booking_seats":
+    get:
+      summary: List booking seats
+      tags:
+      - BookingSeats
+      parameters:
+      - name: booking_id
+        in: query
+        schema:
+          type: integer
+      - name: show_time_detail_id
+        in: query
+        schema:
+          type: integer
+      - name: hold_still
+        in: query
+        schema:
+          type: boolean
+      - name: page
+        in: query
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+      - name: sort
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: booking seats listed
+    post:
+      summary: Create a booking seat
+      tags:
+      - BookingSeats
+      parameters: []
+      responses:
+        '201':
+          description: booking seat created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                booking_id:
+                  type: integer
+                seat_id:
+                  type: integer
+                show_time_detail_id:
+                  type: integer
+                hold_still:
+                  type: boolean
+              required:
+              - booking_id
+              - seat_id
+              - show_time_detail_id
+              - hold_still
+  "/api/v1/booking_seats/{id}":
+    get:
+      summary: Retrieve a booking seat
+      tags:
+      - BookingSeats
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: booking seat found
+        '404':
+          description: booking seat not found
+    put:
+      summary: Update a booking seat
+      tags:
+      - BookingSeats
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: booking seat updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hold_still:
+                  type: boolean
+    delete:
+      summary: Delete a booking seat
+      tags:
+      - BookingSeats
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: booking seat deleted
   "/api/v1/bookings":
     get:
       summary: List bookings
@@ -82,10 +192,6 @@ paths:
         in: query
         schema:
           type: integer
-      - name: status
-        in: query
-        schema:
-          type: string
       - name: q
         in: query
         schema:
@@ -119,15 +225,205 @@ paths:
                   type: integer
                 show_id:
                   type: integer
+                booking_time:
+                  type: string
+                  format: date-time
                 total_amount:
                   type: number
-                status:
-                  type: string
               required:
               - user_id
               - show_id
+              - booking_time
               - total_amount
-              - status
+  "/api/v1/cinemas":
+    get:
+      summary: List cinemas
+      tags:
+      - Cinemas
+      parameters:
+      - name: q
+        in: query
+        schema:
+          type: string
+      - name: sort
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: cinemas listed
+    post:
+      summary: Create cinema
+      tags:
+      - Cinemas
+      parameters: []
+      responses:
+        '201':
+          description: cinema created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+              required:
+              - name
+              - address
+  "/api/v1/cinemas/{id}":
+    get:
+      summary: Retrieve cinema
+      tags:
+      - Cinemas
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: cinema found
+    patch:
+      summary: Update cinema
+      tags:
+      - Cinemas
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: cinema updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+    delete:
+      summary: Delete cinema
+      tags:
+      - Cinemas
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: cinema deleted
+  "/api/v1/genres":
+    get:
+      summary: List genres
+      tags:
+      - Genres
+      parameters:
+      - name: q
+        in: query
+        schema:
+          type: string
+      - name: sort
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: genres listed
+    post:
+      summary: Create genre
+      tags:
+      - Genres
+      parameters: []
+      responses:
+        '201':
+          description: genre created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                genre_name:
+                  type: string
+                genre_description:
+                  type: string
+              required:
+              - genre_name
+              - genre_description
+  "/api/v1/genres/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show genre
+      tags:
+      - Genres
+      responses:
+        '200':
+          description: genre found
+        '404':
+          description: genre not found
+    put:
+      summary: Update genre
+      tags:
+      - Genres
+      parameters: []
+      responses:
+        '200':
+          description: genre updated
+        '422':
+          description: invalid update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                genre_name:
+                  type: string
+                genre_description:
+                  type: string
+    delete:
+      summary: Delete genre
+      tags:
+      - Genres
+      responses:
+        '204':
+          description: genre deleted
+        '404':
+          description: genre not found
   "/api/v1/movies":
     get:
       summary: list movies
@@ -328,6 +624,218 @@ paths:
       responses:
         '204':
           description: no content
+  "/api/v1/rooms":
+    get:
+      summary: List rooms
+      tags:
+      - Rooms
+      parameters:
+      - name: cinema_id
+        in: query
+        schema:
+          type: integer
+      - name: q
+        in: query
+        schema:
+          type: string
+      - name: sort
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: rooms listed
+    post:
+      summary: Create room
+      tags:
+      - Rooms
+      parameters: []
+      responses:
+        '201':
+          description: room created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cinema_id:
+                  type: integer
+                name:
+                  type: string
+                seat_capacity:
+                  type: integer
+              required:
+              - cinema_id
+              - name
+              - seat_capacity
+  "/api/v1/rooms/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show room
+      tags:
+      - Rooms
+      responses:
+        '200':
+          description: room found
+        '404':
+          description: room not found
+    put:
+      summary: Update room
+      tags:
+      - Rooms
+      parameters: []
+      responses:
+        '200':
+          description: room updated
+        '422':
+          description: invalid update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cinema_id:
+                  type: integer
+                name:
+                  type: string
+                seat_capacity:
+                  type: integer
+    delete:
+      summary: Delete room
+      tags:
+      - Rooms
+      responses:
+        '204':
+          description: room deleted
+        '404':
+          description: room not found
+  "/api/v1/seat_show_time_details":
+    get:
+      summary: List seat show time details
+      tags:
+      - SeatShowTimeDetails
+      parameters:
+      - name: show_time_detail_id
+        in: query
+        schema:
+          type: integer
+      - name: seat_id
+        in: query
+        schema:
+          type: integer
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: sort
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: seat show time details listed
+    post:
+      summary: Create seat show time detail
+      tags:
+      - SeatShowTimeDetails
+      parameters: []
+      responses:
+        '201':
+          description: seat show time detail created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                show_time_detail_id:
+                  type: integer
+                seat_id:
+                  type: integer
+                status:
+                  type: string
+                  enum:
+                  - Available
+                  - Booked
+                  - Held
+              required:
+              - show_time_detail_id
+              - seat_id
+              - status
+  "/api/v1/seat_show_time_details/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show seat show time detail
+      tags:
+      - SeatShowTimeDetails
+      responses:
+        '200':
+          description: seat show time detail found
+        '404':
+          description: not found
+    put:
+      summary: Update seat show time detail
+      tags:
+      - SeatShowTimeDetails
+      parameters: []
+      responses:
+        '200':
+          description: seat show time detail updated
+        '422':
+          description: invalid update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                  - Available
+                  - Booked
+                  - Held
+    delete:
+      summary: Delete seat show time detail
+      tags:
+      - SeatShowTimeDetails
+      responses:
+        '204':
+          description: seat show time detail deleted
+        '404':
+          description: not found
   "/api/v1/seats":
     get:
       summary: list seats
@@ -408,6 +916,222 @@ paths:
       responses:
         '204':
           description: seat deleted
+  "/api/v1/show_time_details":
+    get:
+      summary: List show time details
+      tags:
+      - ShowTimeDetails
+      parameters:
+      - name: show_id
+        in: query
+        schema:
+          type: integer
+      - name: sort
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: show_time_details listed
+    post:
+      summary: Create show time detail
+      tags:
+      - ShowTimeDetails
+      parameters: []
+      responses:
+        '201':
+          description: show_time_detail created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                show_id:
+                  type: integer
+                start_time:
+                  type: string
+                  format: date_time
+                end_time:
+                  type: string
+                  format: date_time
+              required:
+              - show_id
+              - start_time
+              - end_time
+  "/api/v1/show_time_details/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show a show time detail
+      tags:
+      - ShowTimeDetails
+      responses:
+        '200':
+          description: show_time_detail found
+        '404':
+          description: not found
+    put:
+      summary: Update a show time detail
+      tags:
+      - ShowTimeDetails
+      parameters: []
+      responses:
+        '200':
+          description: show_time_detail updated
+        '422':
+          description: invalid update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start_time:
+                  type: string
+                  format: date_time
+                end_time:
+                  type: string
+                  format: date_time
+    delete:
+      summary: Delete a show time detail
+      tags:
+      - ShowTimeDetails
+      responses:
+        '204':
+          description: show_time_detail deleted
+        '404':
+          description: not found
+  "/api/v1/shows":
+    get:
+      summary: List shows
+      tags:
+      - Shows
+      parameters:
+      - name: movie_id
+        in: query
+        schema:
+          type: integer
+      - name: cinema_id
+        in: query
+        schema:
+          type: integer
+      - name: room_id
+        in: query
+        schema:
+          type: integer
+      - name: q
+        in: query
+        schema:
+          type: string
+      - name: sort
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: shows listed
+    post:
+      summary: Create show
+      tags:
+      - Shows
+      parameters: []
+      responses:
+        '201':
+          description: show created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                movie_id:
+                  type: integer
+                room_id:
+                  type: integer
+                cinema_id:
+                  type: integer
+                show_day:
+                  type: string
+                  format: date
+                ticket_price:
+                  type: number
+              required:
+              - movie_id
+              - room_id
+              - cinema_id
+              - show_day
+              - ticket_price
+  "/api/v1/shows/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show a show
+      tags:
+      - Shows
+      responses:
+        '200':
+          description: show found
+        '404':
+          description: not found
+    put:
+      summary: Update a show
+      tags:
+      - Shows
+      parameters: []
+      responses:
+        '200':
+          description: show updated
+        '422':
+          description: invalid update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                show_day:
+                  type: string
+                  format: date
+                ticket_price:
+                  type: number
+    delete:
+      summary: Delete a show
+      tags:
+      - Shows
+      responses:
+        '204':
+          description: show deleted
+        '404':
+          description: not found
   "/api/v1/users":
     get:
       summary: List users

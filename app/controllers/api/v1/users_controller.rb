@@ -23,32 +23,24 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def create
-    user = User.new(user_params)
-
-    if user.save
-      json_success(
-        data: user.as_json(only: [:id, :fullname, :email, :phone, :role, :created_at]),
-        message: "User created successfully",
-        status: :created
-      )
-    else
-      json_error(errors: user.errors.full_messages)
-    end
+    user = User.create!(user_params)
+    json_success(
+      data: user.as_json(only: [:id, :fullname, :email, :phone, :role, :created_at]),
+      message: "User created successfully",
+      status: :created
+    )
   end
 
   def update
-    if @user.update(user_params)
-      json_success(
-        data: @user.as_json(only: [:id, :fullname, :email, :phone, :role, :updated_at]),
-        message: "User updated successfully"
-      )
-    else
-      json_error(errors: @user.errors.full_messages)
-    end
+    @user.update!(user_params)
+    json_success(
+      data: @user.as_json(only: [:id, :fullname, :email, :phone, :role, :updated_at]),
+      message: "User updated successfully"
+    )
   end
 
   def destroy
-    @user.destroy
+    @user.destroy!
     head :no_content
   end
 

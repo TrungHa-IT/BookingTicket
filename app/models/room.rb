@@ -11,4 +11,24 @@ class Room < ApplicationRecord
 
   validates :seat_capacity, presence: true,
                             numericality: { only_integer: true, greater_than: 0 }
+
+  # Scopes
+  scope :by_cinema, ->(cinema_id) { where(cinema_id: cinema_id) if cinema_id.present? }
+  scope :search, ->(q) {
+    if q.present?
+      pattern = "%#{ActiveRecord::Base.sanitize_sql_like(q)}%"
+      where("name LIKE ?", pattern)
+    end
+  }
+  scope :sorted, ->(sort) {
+    if sort.present?
+      if sort.start_with?('-')
+        order("#{sort[1..]} DESC")
+      else
+        order("#{sort} ASC")
+      end
+    else
+      order(created_at: :desc)
+    end
+  }
 end
