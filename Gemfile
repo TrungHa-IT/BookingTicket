@@ -3,7 +3,7 @@ source "https://rubygems.org"
 # ===== Core gems =====
 gem 'jwt'
 gem 'rqrcode'
-gem "rails", "~> 7.2.2", ">= 7.2.2.2"
+gem "rails", "~> 7.2.3"
 gem "mysql2", "~> 0.5"
 gem "puma", ">= 5.0"
 gem "importmap-rails"
